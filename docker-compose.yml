@@ -1,0 +1,8 @@
+services:
+  sunlight:
+    build: .
+    image: occluded-sunlight:latest
+    container_name: occluded-sunlight
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

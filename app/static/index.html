@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>遮挡日照窗口计算器</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>遮挡日照窗口计算器</h1>
+      <p class="subtitle">
+        依据地平线遮挡测点与太阳轨迹（Astral，几何仰角不计大气折射），计算当地一天中
+        太阳未被遮挡的直晒时段。
+      </p>
+    </header>
+
+    <form id="calc-form" novalidate>
+      <section class="card">
+        <h2>位置与日期</h2>
+        <div class="grid">
+          <label class="field">
+            <span>民用日期</span>
+            <input type="date" name="date" id="date" required />
+            <small class="err" data-error="date"></small>
+          </label>
+          <label class="field">
+            <span>纬度（-66～66）</span>
+            <input type="number" name="latitude" id="latitude" step="0.0001"
+                   min="-66" max="66" value="39.9042" required />
+            <small class="err" data-error="latitude"></small>
+          </label>
+          <label class="field">
+            <span>经度（-180～180）</span>
+            <input type="number" name="longitude" id="longitude" step="0.0001"
+                   min="-180" max="180" value="116.4074" required />
+            <small class="err" data-error="longitude"></small>
+          </label>
+          <label class="field">
+            <span>时区</span>
+            <select name="timezone" id="timezone">
+              <option value="Asia/Shanghai">Asia/Shanghai（北京时间）</option>
+              <option value="Europe/Berlin">Europe/Berlin（柏林）</option>
+              <option value="America/New_York">America/New_York（纽约）</option>
+            </select>
+            <small class="err" data-error="timezone"></small>
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="row-between">
+          <h2>地平线测点（2～12 个）</h2>
+          <button type="button" id="add-point" class="btn secondary">＋ 添加测点</button>
+        </div>
+        <p class="hint">
+          方位角以正北为 0°、顺时针计量，范围 [0, 360)，且不得重复；
+          遮挡仰角范围 0～80°。测点会按方位角环形排序，相邻点之间线性插值
+          （末点跨 360° 连续回到首点）。
+        </p>
+        <small class="err" data-error="points"></small>
+        <table class="points-table">
+          <thead>
+            <tr><th>#</th><th>方位角（°）</th><th>遮挡仰角（°）</th><th>操作</th></tr>
+          </thead>
+          <tbody id="points-body"></tbody>
+        </table>
+      </section>
+
+      <div class="actions">
+        <button type="submit" class="btn primary" id="submit-btn">计算直晒窗口</button>
+        <small class="err" data-error="_"></small>
+      </div>
+    </form>
+
+    <section id="results" class="card hidden" aria-live="polite">
+      <h2>计算结果</h2>
+      <div id="summary" class="summary"></div>
+      <div id="dst-banner" class="dst-banner hidden"></div>
+
+      <h3>当日时间轴</h3>
+      <div id="timeline" class="timeline"></div>
+      <div class="legend">
+        <span class="legend-item"><i class="swatch sun"></i>直晒</span>
+        <span class="legend-item"><i class="swatch shadow"></i>被遮挡 / 夜间</span>
+        <span class="legend-item"><i class="swatch dst"></i>夏令时切换</span>
+      </div>
+
+      <h3>直晒时段（半开区间，本地时间）</h3>
+      <ul id="interval-list" class="interval-list"></ul>
+
+      <h3>遮挡剖面与太阳轨迹（极坐标，北朝上顺时针）</h3>
+      <div class="chart-wrap">
+        <svg id="profile-chart" viewBox="0 0 360 360" role="img"
+             aria-label="遮挡剖面与太阳轨迹极坐标图"></svg>
+      </div>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

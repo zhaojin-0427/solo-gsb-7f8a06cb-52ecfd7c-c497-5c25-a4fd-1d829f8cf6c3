@@ -1,0 +1,4 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+astral==3.2
+tzdata==2024.2
