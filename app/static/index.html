@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>本地遮挡日照窗口</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <h1>本地遮挡日照窗口</h1>
+    <p class="hint">
+      按地平线遮挡测点计算当地一天内的太阳直晒时段。方位角以正北为 0° 顺时针计量；
+      结果为半开时段 [开始, 结束)，时间轴按实际 UTC 分钟绘制（夏令时切换日为 23/25 小时）。
+    </p>
+
+    <form id="calc-form" novalidate>
+      <fieldset>
+        <legend>基本参数</legend>
+        <div class="grid">
+          <label>日期
+            <input type="date" id="date" required>
+          </label>
+          <label>纬度（-66～66）
+            <input type="number" id="latitude" step="any" min="-66" max="66" value="31.2304" required>
+          </label>
+          <label>经度（-180～180）
+            <input type="number" id="longitude" step="any" min="-180" max="180" value="121.4737" required>
+          </label>
+          <label>时区
+            <select id="timezone">
+              <option value="Asia/Shanghai" selected>Asia/Shanghai</option>
+              <option value="Europe/Berlin">Europe/Berlin</option>
+              <option value="America/New_York">America/New_York</option>
+            </select>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>地平线测点（2～12 个，方位角不得重复）</legend>
+        <table id="points-table">
+          <thead>
+            <tr><th>方位角 ° [0,360)</th><th>遮挡仰角 ° (0～80)</th><th></th></tr>
+          </thead>
+          <tbody id="points-body"></tbody>
+        </table>
+        <button type="button" id="add-point">＋ 添加测点</button>
+      </fieldset>
+
+      <button type="submit" id="submit-btn">计算直晒时段</button>
+    </form>
+
+    <div id="errors" class="errors" hidden></div>
+
+    <section id="result" hidden>
+      <h2>结果 <span id="result-date"></span></h2>
+      <p id="summary"></p>
+      <div id="timeline"></div>
+      <h3>直晒时段（本地时间，半开区间）</h3>
+      <ul id="windows"></ul>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
